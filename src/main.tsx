@@ -1,10 +1,13 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 
-import { App } from "./app/App.tsx";
-import "./styles/app.css";
+import { App } from './app/App';
+import './styles/app.css';
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById('root');
+if (root === null) throw new Error('The application root element was not found.');
+
+createRoot(root).render(
   <StrictMode>
     <App />
   </StrictMode>,

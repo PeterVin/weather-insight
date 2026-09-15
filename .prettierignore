@@ -1,0 +1,8 @@
+dist
+coverage
+output
+node_modules
+.npm-cache
+.pytest_cache
+package-lock.json
+ticket-versions
