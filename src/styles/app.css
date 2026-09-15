@@ -1,0 +1,28 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #172126;
+  background: #f4f6f5;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+}
+button,
+input {
+  font: inherit;
+}
+.welcome {
+  width: min(720px, calc(100% - 2rem));
+  margin: 18vh auto;
+}
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+h1 {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  line-height: 0.95;
+}
