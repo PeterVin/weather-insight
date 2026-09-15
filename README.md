@@ -10,6 +10,6 @@ The current roadmap:
 
 ![cloudSun](https://www.readmecodegen.com/api/social-icon?name=cloudSun&size=16) Make it fetch weather data.
 
-![spider](https://www.readmecodegen.com/api/social-icon?name=spider&size=16) Make it look more or less terrible.
+![spider](https://www.readmecodegen.com/api/social-icon?name=spider&size=16) Make it look more or less nice.
 
 ![forward](https://www.readmecodegen.com/api/social-icon?name=forward&size=16&color=%23f59e0b) Add features until I get distracted by another project.
