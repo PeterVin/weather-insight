@@ -1,0 +1,77 @@
+import type { WeatherResponse } from '../features/weather/model/weather.types';
+
+export const weatherFixture: WeatherResponse = {
+  location: {
+    id: 'budapest-hu',
+    name: 'Budapest',
+    country: 'Hungary',
+    latitude: 47.4979,
+    longitude: 19.0402,
+    timezone: 'Europe/Budapest',
+  },
+  current: {
+    time: '2026-09-06T12:00:00+02:00',
+    temperatureC: 24.6,
+    apparentTemperatureC: 25.1,
+    weatherCode: 1,
+    summary: 'Mostly clear',
+    humidityPercent: 57,
+    precipitationMm: 0,
+    windSpeedKmh: 11.2,
+    windGustsKmh: 18.4,
+    windDirectionDeg: 115,
+    cloudCoverPercent: 18,
+    isDay: true,
+    pressureHpa: 1017,
+    visibilityKm: 24,
+    uvIndex: 4.2,
+  },
+  hourly: [
+    {
+      time: '2026-09-06T13:00:00+02:00',
+      temperatureC: 25,
+      apparentTemperatureC: 25.4,
+      precipitationProbabilityPercent: 10,
+      precipitationMm: 0,
+      weatherCode: 1,
+      windSpeedKmh: 12,
+      windGustsKmh: 18,
+      humidityPercent: 54,
+      cloudCoverPercent: 16,
+      visibilityKm: 24,
+      uvIndex: 4.5,
+      isDay: true,
+    },
+  ],
+  daily: [
+    {
+      date: '2026-09-06',
+      temperatureMaxC: 27,
+      temperatureMinC: 16,
+      weatherCode: 1,
+      sunrise: '2026-09-06T06:10:00+02:00',
+      sunset: '2026-09-06T19:13:00+02:00',
+      precipitationProbabilityMaxPercent: 20,
+      precipitationSumMm: 0.2,
+      windSpeedMaxKmh: 18,
+      uvIndexMax: 5.1,
+    },
+  ],
+  airQuality: {
+    current: {
+      europeanAqi: 24,
+      pm25: 8.2,
+      pm10: 14.1,
+      nitrogenDioxide: 11,
+      ozone: 61,
+    },
+    hourly: [
+      {
+        time: '2026-09-06T13:00:00+02:00',
+        europeanAqi: 24,
+        pm25: 8.2,
+      },
+    ],
+  },
+  updatedAt: '2026-09-06T12:03:00+02:00',
+};
