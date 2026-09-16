@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
+import type { DashboardView } from '../features/weather/model/weather.types';
 
-type DashboardView = 'overview' | 'hourly' | 'daily' | 'air-quality' | 'compare' | 'preferences';
 const VIEWS: readonly { id: DashboardView; label: string }[] = [
   { id: 'overview', label: 'Today' },
   { id: 'hourly', label: 'Hourly' },
