@@ -1,28 +1,89 @@
 :root {
-  font-family: system-ui, sans-serif;
-  color: #172126;
-  background: #f4f6f5;
+  font-family: 'Segoe UI Variable', 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: #f2f1ec;
+  background: #0c0f11;
+  font-synthesis: none;
+  --canvas: #0c0f11;
+  --surface: #14191d;
+  --raised: #1a2024;
+  --divider: #2a3237;
+  --text: #f2f1ec;
+  --muted: #9ca5a9;
+  --accent: #78beb9;
+  --warning: #d2a15d;
 }
 * {
   box-sizing: border-box;
 }
+html {
+  color-scheme: dark;
+}
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100vh;
+  background: var(--canvas);
 }
-button,
-input {
+button {
   font: inherit;
 }
-.welcome {
-  width: min(720px, calc(100% - 2rem));
-  margin: 18vh auto;
+button {
+  color: inherit;
 }
-.eyebrow {
+.app-shell {
+  min-height: 100vh;
+}
+.app-header {
+  min-height: 76px;
+  padding: 1rem max(1.25rem, calc((100% - 1180px) / 2));
+  border-bottom: 1px solid var(--divider);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.app-header strong {
+  font-size: 1.2rem;
+}
+.app-header span {
+  color: var(--muted);
+}
+.view-tabs {
+  display: flex;
+  gap: 1.5rem;
+  width: min(1180px, calc(100% - 2.5rem));
+  margin: 0 auto;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--divider);
+}
+.view-tabs button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  padding: 1rem 0;
+  white-space: nowrap;
+}
+.view-tabs button[aria-current='page'] {
+  border-color: var(--accent);
+}
+main {
+  width: min(1180px, calc(100% - 2.5rem));
+  margin: 0 auto;
+  padding: 3rem 0 5rem;
+}
+.eyebrow,
+.section-label {
+  color: var(--accent);
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+}
+h1,
+h2,
+p {
+  margin-top: 0;
 }
 h1 {
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  line-height: 0.95;
+  max-width: 850px;
+  font-size: clamp(2.4rem, 7vw, 5.8rem);
+  line-height: 0.94;
 }
