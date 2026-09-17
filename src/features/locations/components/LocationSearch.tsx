@@ -110,7 +110,20 @@ export function LocationSearch({
               }
             }}
           />
-
+          {query.length > 0 && (
+            <button
+              className="search-form__clear"
+              type="button"
+              aria-label="Clear location search"
+              onClick={() => {
+                setQuery('');
+                setIsOpen(false);
+                inputRef.current?.focus();
+              }}
+            >
+              ×
+            </button>
+          )}
           {search.status === 'loading' && (
             <span className="search-form__spinner" role="status" aria-label="Searching locations" />
           )}

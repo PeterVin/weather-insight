@@ -1,16 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { LocationSearch } from '../features/locations/components/LocationSearch';
-import type { DashboardView, Location } from '../features/weather/model/weather.types';
-
-const INITIAL_LOCATION: Location = {
-  id: '3054643',
-  name: 'Budapest',
-  country: 'Hungary',
-  adminArea: 'Budapest',
-  latitude: 47.4979,
-  longitude: 19.0402,
-  timezone: 'Europe/Budapest',
-};
+import {
+  DEFAULT_LOCATION,
+  useSelectedLocation,
+} from '../features/locations/model/useSelectedLocation';
+import type { DashboardView } from '../features/weather/model/weather.types';
 
 const VIEWS: readonly { id: DashboardView; label: string }[] = [
   { id: 'overview', label: 'Today' },
@@ -27,7 +21,7 @@ function viewFromUrl(): DashboardView {
 }
 
 export function App(): React.JSX.Element {
-  const [location, setLocation] = useState<Location>(INITIAL_LOCATION);
+  const [location, setLocation] = useSelectedLocation();
   const [view, setViewState] = useState<DashboardView>(viewFromUrl);
   useEffect(() => {
     const sync = (): void => {
@@ -67,12 +61,15 @@ export function App(): React.JSX.Element {
           </button>
         ))}
       </nav>
-      <main id="main-content">
-        <p className="eyebrow">{VIEWS.find((item) => item.id === view)?.label}</p>
-        <p>{[location.adminArea, location.country].filter(Boolean).join(', ')}</p>
-        <h1>
-          {view === 'overview' ? 'Weather data will be displayed here.' : 'Under construction.'}
-        </h1>
+      <main>
+        <p className="eyebrow">Selected location</p>
+        <h1>{location.name}</h1>
+        <p>
+          {location.adminArea ?? DEFAULT_LOCATION.adminArea}, {location.country}
+        </p>
+        <p className="muted">
+          {VIEWS.find((item) => item.id === view)?.label} will use {location.timezone}.
+        </p>
       </main>
     </div>
   );
