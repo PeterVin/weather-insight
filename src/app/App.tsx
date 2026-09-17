@@ -1,5 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { DashboardView } from '../features/weather/model/weather.types';
+import { LocationSearch } from '../features/locations/components/LocationSearch';
+import type { DashboardView, Location } from '../features/weather/model/weather.types';
+
+const INITIAL_LOCATION: Location = {
+  id: '3054643',
+  name: 'Budapest',
+  country: 'Hungary',
+  adminArea: 'Budapest',
+  latitude: 47.4979,
+  longitude: 19.0402,
+  timezone: 'Europe/Budapest',
+};
 
 const VIEWS: readonly { id: DashboardView; label: string }[] = [
   { id: 'overview', label: 'Today' },
@@ -16,6 +27,7 @@ function viewFromUrl(): DashboardView {
 }
 
 export function App(): React.JSX.Element {
+  const [location, setLocation] = useState<Location>(INITIAL_LOCATION);
   const [view, setViewState] = useState<DashboardView>(viewFromUrl);
   useEffect(() => {
     const sync = (): void => {
@@ -26,17 +38,20 @@ export function App(): React.JSX.Element {
       window.removeEventListener('popstate', sync);
     };
   }, []);
+
   const setView = useCallback((next: DashboardView): void => {
     const params = new URLSearchParams(window.location.search);
     params.set('view', next);
     window.history.replaceState(null, '', `${window.location.pathname}?${params}`);
     setViewState(next);
   }, []);
+
   return (
     <div className="app-shell">
       <header className="app-header">
         <strong>Weather Insight</strong>
         <span>The #1,243,163 weather app </span>
+        <LocationSearch selectedLocation={location} onSelect={setLocation} />
       </header>
       <nav className="view-tabs" aria-label="Weather views">
         {VIEWS.map((item) => (
@@ -54,6 +69,7 @@ export function App(): React.JSX.Element {
       </nav>
       <main id="main-content">
         <p className="eyebrow">{VIEWS.find((item) => item.id === view)?.label}</p>
+        <p>{[location.adminArea, location.country].filter(Boolean).join(', ')}</p>
         <h1>
           {view === 'overview' ? 'Weather data will be displayed here.' : 'Under construction.'}
         </h1>

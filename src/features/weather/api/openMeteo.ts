@@ -7,6 +7,7 @@ import type {
 } from '../model/weather.types';
 
 const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
+const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const REQUEST_TIMEOUT_MS = 12_000;
 
 type ErrorCode = 'http' | 'network' | 'timeout' | 'invalid-response';
@@ -108,6 +109,7 @@ function seriesOptionalNumber(source: JsonRecord, key: string, index: number): n
   const values = source[key];
   if (!Array.isArray(values)) return undefined;
   const value: unknown = values[index];
+
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
 
@@ -123,6 +125,7 @@ function offsetSuffix(offsetSeconds: number): string {
   const minutes = Math.trunc(offsetSeconds / 60);
   const sign = minutes < 0 ? '-' : '+';
   const absolute = Math.abs(minutes);
+
   return `${sign}${String(Math.floor(absolute / 60)).padStart(2, '0')}:${String(absolute % 60).padStart(2, '0')}`;
 }
 
@@ -145,6 +148,7 @@ async function fetchJson(url: string, signal?: AbortSignal): Promise<unknown> {
     timeout.abort();
   }, REQUEST_TIMEOUT_MS);
   const combinedSignal = signal ? AbortSignal.any([signal, timeout.signal]) : timeout.signal;
+
   try {
     const response = await fetch(url, {
       headers: { Accept: 'application/json' },
@@ -188,11 +192,13 @@ function query(url: string, params: Record<string, string | number>): string {
   const search = new URLSearchParams(
     Object.entries(params).map(([key, value]) => [key, String(value)]),
   );
+
   return `${url}?${search.toString()}`;
 }
 
 function normalizeCurrent(raw: JsonRecord, offset: number): CurrentWeather {
   const code = requiredNumber(raw, 'weather_code');
+
   return {
     time: isoTime(requiredText(raw, 'time'), offset),
     temperatureC: requiredNumber(raw, 'temperature_2m'),
@@ -217,6 +223,7 @@ function normalizeCurrent(raw: JsonRecord, offset: number): CurrentWeather {
 
 function normalizeHourly(raw: JsonRecord, offset: number): HourlyWeather[] {
   const times = series(raw, 'time');
+
   return times.map((_, index) => ({
     time: isoTime(seriesText(raw, 'time', index), offset),
     temperatureC: seriesRequiredNumber(raw, 'temperature_2m', index),
@@ -239,6 +246,7 @@ function normalizeHourly(raw: JsonRecord, offset: number): HourlyWeather[] {
 
 function normalizeDaily(raw: JsonRecord, offset: number): DailyWeather[] {
   const dates = series(raw, 'time');
+
   return dates.map((_, index) => ({
     date: seriesText(raw, 'time', index),
     temperatureMaxC: seriesRequiredNumber(raw, 'temperature_2m_max', index),
@@ -257,6 +265,46 @@ function normalizeDaily(raw: JsonRecord, offset: number): DailyWeather[] {
   }));
 }
 
+export async function searchLocations(
+  queryText: string,
+  signal?: AbortSignal,
+): Promise<Location[]> {
+  const payload = asRecord(
+    await fetchJson(
+      query(GEOCODING_URL, { name: queryText.trim(), count: 8, language: 'en', format: 'json' }),
+      signal,
+    ),
+    'geocoding',
+  );
+
+  const results = payload.results;
+  if (results === undefined) return [];
+  if (!Array.isArray(results)) {
+    throw new OpenMeteoError('Open-Meteo returned invalid location results.', {
+      code: 'invalid-response',
+    });
+  }
+  return results.map((value) => {
+    const item = asRecord(value, 'location');
+    const latitude = requiredNumber(item, 'latitude');
+    const longitude = requiredNumber(item, 'longitude');
+
+    return {
+      id:
+        typeof item.id === 'number'
+          ? String(item.id)
+          : `${latitude.toFixed(5)},${longitude.toFixed(5)}`,
+      name: requiredText(item, 'name'),
+      country: requiredText(item, 'country'),
+      adminArea:
+        typeof item.admin1 === 'string' && item.admin1.length > 0 ? item.admin1 : undefined,
+      latitude,
+      longitude,
+      timezone: requiredText(item, 'timezone'),
+    };
+  });
+}
+
 export async function getWeather(
   location: Location,
   signal?: AbortSignal,
@@ -273,8 +321,10 @@ export async function getWeather(
     daily:
       'temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset,precipitation_probability_max,precipitation_sum,wind_speed_10m_max,uv_index_max',
   });
+
   const forecast = asRecord(await fetchJson(forecastUrl, signal), 'forecast');
   const offset = requiredNumber(forecast, 'utc_offset_seconds');
+
   return {
     location: { ...location, timezone: requiredText(forecast, 'timezone') },
     current: normalizeCurrent(asRecord(forecast.current, 'current'), offset),
