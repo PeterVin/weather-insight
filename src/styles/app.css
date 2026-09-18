@@ -144,3 +144,30 @@ h1 {
   background: transparent;
   text-align: left;
 }
+.unit-switch {
+  display: inline-flex;
+  border: 1px solid var(--divider);
+}
+.unit-switch button {
+  border: 0;
+  background: transparent;
+  padding: 0.5rem 0.7rem;
+}
+.unit-switch button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--canvas);
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  border-block: 1px solid var(--divider);
+}
+.metric {
+  padding: 1rem;
+  border-right: 1px solid var(--divider);
+}
+.metric strong {
+  display: block;
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+}

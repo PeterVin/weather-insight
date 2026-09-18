@@ -1,12 +1,24 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
+import { weatherFixture } from '../test/weatherFixture';
 import { App } from './App';
 
-describe('App navigation', () => {
-  it('stores the selected view in the URL', async () => {
+vi.mock('../features/weather/model/useWeather', () => ({
+  useWeather: () => ({
+    status: 'success',
+    data: weatherFixture,
+    error: null,
+    isStale: false,
+    lastSuccessfulAt: weatherFixture.updatedAt,
+    refresh: vi.fn(),
+  }),
+}));
+
+describe('Weather application', () => {
+  it('renders normalized weather data', () => {
     render(<App />);
-    await userEvent.click(screen.getByRole('button', { name: 'Hourly' }));
-    expect(new URLSearchParams(window.location.search).get('view')).toBe('hourly');
+    expect(
+      screen.getByRole('heading', { name: weatherFixture.current.summary }),
+    ).toBeInTheDocument();
   });
 });
