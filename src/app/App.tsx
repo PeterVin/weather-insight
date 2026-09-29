@@ -4,6 +4,8 @@ import { LocationSearch } from '../features/locations/components/LocationSearch'
 import { useSelectedLocation } from '../features/locations/model/useSelectedLocation';
 import { CurrentConditions } from '../features/weather/components/CurrentConditions';
 import { useWeather } from '../features/weather/model/useWeather';
+import { selectedDayWeather } from '../features/weather/model/selectedDay';
+import { ForecastDaySelector } from '../features/weather/components/ForecastDaySelector';
 import { useOnlineStatus } from '../shared/model/useOnlineStatus';
 
 import type { DashboardView, TemperatureUnit } from '../features/weather/model/weather.types';
@@ -30,8 +32,11 @@ export function App(): React.JSX.Element {
       ? 'fahrenheit'
       : 'celsius',
   );
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
   const weather = useWeather(location);
   const online = useOnlineStatus();
+  const selected = weather.data ? selectedDayWeather(weather.data, selectedDate) : null;
 
   useEffect(() => {
     const sync = (): void => {
@@ -108,7 +113,21 @@ export function App(): React.JSX.Element {
         )}
         {weather.data && view === 'overview' && (
           <>
-            <CurrentConditions weather={weather.data} unit={unit} />
+            <>
+              {selected && (
+                <CurrentConditions
+                  selectedDay={selected}
+                  location={weather.data.location}
+                  unit={unit}
+                />
+              )}
+              <ForecastDaySelector
+                daily={weather.data.daily}
+                selectedDate={selected?.date ?? null}
+                unit={unit}
+                onSelect={setSelectedDate}
+              />
+            </>
           </>
         )}
 
