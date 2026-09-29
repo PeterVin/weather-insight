@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { LocationSearch } from '../features/locations/components/LocationSearch';
 import { useSelectedLocation } from '../features/locations/model/useSelectedLocation';
-import { formatTemperature, formatUpdatedAt } from '../features/weather/lib/weatherFormatting';
+import { CurrentConditions } from '../features/weather/components/CurrentConditions';
 import { useWeather } from '../features/weather/model/useWeather';
 import { useOnlineStatus } from '../shared/model/useOnlineStatus';
 
@@ -85,8 +85,8 @@ export function App(): React.JSX.Element {
       <nav className="view-tabs" aria-label="Weather views">
         {VIEWS.map((item) => (
           <button
-            key={item.id}
             type="button"
+            key={item.id}
             aria-current={view === item.id ? 'page' : undefined}
             onClick={() => {
               setView(item.id);
@@ -102,39 +102,21 @@ export function App(): React.JSX.Element {
         )}
         {weather.status === 'error' && weather.data === null && <p role="alert">{weather.error}</p>}
         {weather.data && (
+          <p className="muted">
+            {online ? 'Live forecast' : 'Saved forecast'} · {weather.data.location.timezone}
+          </p>
+        )}
+        {weather.data && view === 'overview' && (
           <>
-            <p className="eyebrow">
-              {location.name} · {online ? 'Live' : 'Saved data'}
-            </p>
-            <h1>{formatTemperature(weather.data.current.temperatureC, unit)}</h1>
-            <h2>{weather.data.current.summary}</h2>
-            <p className="muted">
-              Updated {formatUpdatedAt(weather.lastSuccessfulAt ?? weather.data.updatedAt)}
-            </p>
-            <section className="metrics">
-              <div className="metric">
-                <span>Feels like</span>
-                <strong>
-                  {formatTemperature(weather.data.current.apparentTemperatureC, unit)}
-                </strong>
-              </div>
-              <div className="metric">
-                <span>Humidity</span>
-                <strong>{weather.data.current.humidityPercent}%</strong>
-              </div>
-              <div className="metric">
-                <span>Wind</span>
-                <strong>{weather.data.current.windSpeedKmh} km/h</strong>
-              </div>
-              <div className="metric">
-                <span>Rain</span>
-                <strong>{weather.data.current.precipitationMm} mm</strong>
-              </div>
-            </section>
-            <p className="status">
-              The {VIEWS.find((item) => item.id === view)?.label} data will visible be here.
-            </p>
+            <CurrentConditions weather={weather.data} unit={unit} />
           </>
+        )}
+
+        {weather.data && !['overview'].includes(view) && (
+          <section className="panel">
+            <h1>{VIEWS.find((item) => item.id === view)?.label}</h1>
+            <p>This focused feature arrives in a later commit.</p>
+          </section>
         )}
       </main>
     </div>
