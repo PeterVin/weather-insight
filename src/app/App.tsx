@@ -6,6 +6,7 @@ import { CurrentConditions } from '../features/weather/components/CurrentConditi
 import { useWeather } from '../features/weather/model/useWeather';
 import { selectedDayWeather } from '../features/weather/model/selectedDay';
 import { ForecastDaySelector } from '../features/weather/components/ForecastDaySelector';
+import { HourlyForecast } from '../features/weather/components/HourlyForecast';
 import { useOnlineStatus } from '../shared/model/useOnlineStatus';
 
 import type { DashboardView, TemperatureUnit } from '../features/weather/model/weather.types';
@@ -129,6 +130,13 @@ export function App(): React.JSX.Element {
               />
             </>
           </>
+        )}
+        {weather.data && view === 'hourly' && (
+          <HourlyForecast
+            hourly={weather.data.hourly}
+            unit={unit}
+            timeZone={weather.data.location.timezone}
+          />
         )}
 
         {weather.data && !['overview'].includes(view) && (
